@@ -3,9 +3,8 @@ from encription import encrypt, decrypt
 import sqlite3
 
 defs = {"1": User().create,
-        "2": print,
+        "2": User().modify,
         "3": User().delete}
-
 
 def menu():
     print("1 | Nutzer erstellen \n"
@@ -15,7 +14,7 @@ def menu():
     defs[c]()
 
 
-def login():
+def login(count):
     username = input("Username: ")
     conn = sqlite3.connect("data.db")
     c = conn.cursor()
@@ -27,9 +26,14 @@ def login():
         if password == decrypt(user[2]):
             print("Login erfolgreich!")
             current = CurrentUser(username)
-            menu()
     except:
+        count += 1
         print("Nutzer existiert nicht!")
+        if count < 3:
+            print("Noch", 3 - count, "Versuche!")
+            login(count)
+            exit()
+    menu()
 
 
-login()
+login(0)
